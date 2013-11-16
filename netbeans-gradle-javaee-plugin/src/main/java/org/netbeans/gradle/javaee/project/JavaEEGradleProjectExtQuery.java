@@ -14,8 +14,6 @@ import org.openide.util.lookup.ServiceProvider;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
 /**
  *
  * @author Ed
@@ -24,7 +22,7 @@ import javax.annotation.Nonnull;
 public class JavaEEGradleProjectExtQuery implements GradleProjectExtensionQuery {
 
     @Override
-    public GradleProjectExtension loadExtensionForProject(@Nonnull Project project) throws IOException{
+    public GradleProjectExtension loadExtensionForProject(Project project) throws IOException{
         return new JavaEeExtension(project);
     }
 }

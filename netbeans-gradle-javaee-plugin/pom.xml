@@ -6,8 +6,9 @@
     <artifactId>netbeans-gradle-javaee-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>nbm</packaging>
+    <url>https://github.com/hildo/netbeans-gradle-javaee-project</url>
 
-    <name>netbeans-gradle-javaee-plugin</name>
+    <name>Gradle JavaEE Support</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

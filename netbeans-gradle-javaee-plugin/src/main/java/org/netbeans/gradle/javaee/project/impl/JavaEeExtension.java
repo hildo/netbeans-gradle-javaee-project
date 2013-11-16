@@ -9,6 +9,8 @@ package org.netbeans.gradle.javaee.project.impl;
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
 import org.openide.util.Lookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -21,9 +23,13 @@ import java.util.Set;
  */
 public class JavaEeExtension implements GradleProjectExtension {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaEeExtension.class);
+
     private final Project project;
 
     public JavaEeExtension(Project project) {
+        LOGGER.info("JavaEeExtension.Create -- slf4j");
+        System.out.println("JavaEeExtension.Create -- sout");
         this.project = project;
     }
 
@@ -39,7 +45,7 @@ public class JavaEeExtension implements GradleProjectExtension {
 
     @Override
     public Lookup getExtensionLookup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override
