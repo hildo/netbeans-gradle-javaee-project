@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.netbeans.gradle.javaee.project.impl;
+package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
@@ -21,13 +21,13 @@ import java.util.Set;
  *
  * @author Ed
  */
-public class JavaEeExtension implements GradleProjectExtension {
+public class WebModuleExtension implements GradleProjectExtension {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaEeExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebModuleExtension.class);
 
     private final Project project;
 
-    public JavaEeExtension(Project project) {
+    public WebModuleExtension(Project project) {
         LOGGER.info("JavaEeExtension.Create -- slf4j");
         System.out.println("JavaEeExtension.Create -- sout");
         this.project = project;

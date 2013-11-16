@@ -4,10 +4,9 @@
  * and open the template in the editor.
  */
 
-package org.netbeans.gradle.javaee.project;
+package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.project.Project;
-import org.netbeans.gradle.javaee.project.impl.JavaEeExtension;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtensionQuery;
 import org.openide.util.lookup.ServiceProvider;
@@ -19,10 +18,10 @@ import java.io.IOException;
  * @author Ed
  */
 @ServiceProvider(service = GradleProjectExtensionQuery.class, position = 800)
-public class JavaEEGradleProjectExtQuery implements GradleProjectExtensionQuery {
+public class WebModuleExtensionQuery implements GradleProjectExtensionQuery {
 
     @Override
     public GradleProjectExtension loadExtensionForProject(Project project) throws IOException{
-        return new JavaEeExtension(project);
+        return new WebModuleExtension(project);
     }
 }
