@@ -9,8 +9,7 @@ package org.netbeans.gradle.javaee.web;
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
 import org.openide.util.Lookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openide.util.lookup.Lookups;
 
 import java.io.File;
 import java.util.List;
@@ -23,14 +22,12 @@ import java.util.Set;
  */
 public class WebModuleExtension implements GradleProjectExtension {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebModuleExtension.class);
-
     private final Project project;
+    private final Lookup extensionLookup;
 
     public WebModuleExtension(Project project) {
-        LOGGER.info("JavaEeExtension.Create -- slf4j");
-        System.out.println("JavaEeExtension.Create -- sout");
         this.project = project;
+        extensionLookup = null;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class WebModuleExtension implements GradleProjectExtension {
 
     @Override
     public Lookup getExtensionLookup() {
-        return null;
+        return extensionLookup;
     }
 
     @Override
