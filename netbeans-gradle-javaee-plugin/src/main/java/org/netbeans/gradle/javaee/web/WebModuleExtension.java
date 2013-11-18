@@ -12,6 +12,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,17 +28,17 @@ public class WebModuleExtension implements GradleProjectExtension {
 
     public WebModuleExtension(Project project) {
         this.project = project;
-        extensionLookup = null;
+        extensionLookup = Lookups.singleton(new GradleWebModuleProvider(project));
     }
 
     @Override
     public String getExtensionName() {
-        return "org.netbeans.gradle.project.javaee.JavaEeExtension";
+        return "org.netbeans.gradle.project.javaee.WebModuleExtension";
     }
 
     @Override
     public Iterable<List<Class<?>>> getGradleModels() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.emptyList();
     }
 
     @Override
@@ -47,12 +48,12 @@ public class WebModuleExtension implements GradleProjectExtension {
 
     @Override
     public Set<String> modelsLoaded(Lookup modelLookup) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.emptySet();
     }
 
     @Override
     public Map<File, Lookup> deduceModelsForProjects(Lookup modelLookup) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.emptyMap();
     }
 
 }
