@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE72</netbeans.version>
+        <netbeans.version>RELEASE74</netbeans.version>
     </properties>
 
     <repositories>
@@ -117,6 +117,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-web-common</artifactId>
+            <version>${netbeans.version}</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -138,8 +144,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 
