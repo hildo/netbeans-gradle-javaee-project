@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.csea</groupId>
@@ -98,6 +98,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.netbeans.modules</groupId>
+            <artifactId>org-netbeans-modules-web-common</artifactId>
+            <version>${netbeans.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.kelemen</groupId>
             <artifactId>netbeans-gradle-plugin</artifactId>
             <version>1.2.7.1-SNAPSHOT</version>
@@ -117,12 +129,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.netbeans.modules</groupId>
-            <artifactId>org-netbeans-modules-web-common</artifactId>
-            <version>${netbeans.version}</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
 
     <build>
@@ -135,6 +141,12 @@
                 <configuration>
                     <author>Ed Hillmann</author>
                     <codeNameBase>org.netbeans.gradle.javaee.project</codeNameBase>
+                    <moduleDependencies>
+                        <dependency>
+                            <id>org.netbeans.modules:org-netbeans-modules-web-common</id>
+                            <type>impl</type>
+                        </dependency>
+                    </moduleDependencies>
                 </configuration>
             </plugin>
 
