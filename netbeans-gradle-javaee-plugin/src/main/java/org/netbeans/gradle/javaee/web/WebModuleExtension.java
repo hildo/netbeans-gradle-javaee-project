@@ -7,6 +7,7 @@
 package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.project.Project;
+import org.netbeans.gradle.javaee.web.beans.GradleCdiUtil;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -32,8 +33,9 @@ public class WebModuleExtension implements GradleProjectExtension {
         this.project = project;
         extensionLookup = Lookups.fixed(
             new GradleWebModuleProvider(project),
-            new GradleSources(project),
-            new GradleWebRootProvider(project)
+//            new GradleSources(project),
+//            new GradleWebRootProvider(project),
+            new GradleCdiUtil(project)
         );
     }
 
