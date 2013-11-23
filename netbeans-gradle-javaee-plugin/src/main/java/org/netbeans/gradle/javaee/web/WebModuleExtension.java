@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.netbeans.gradle.javaee.web.sources.GradleSources;
-import org.netbeans.gradle.javaee.web.sources.GradleWebRootProvider;
 
 /**
  *
@@ -33,8 +31,6 @@ public class WebModuleExtension implements GradleProjectExtension {
         this.project = project;
         extensionLookup = Lookups.fixed(
             new GradleWebModuleProvider(project),
-//            new GradleSources(project),
-//            new GradleWebRootProvider(project),
             new GradleCdiUtil(project)
         );
     }
