@@ -8,56 +8,59 @@ package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.beans.GradleCdiUtil;
-import org.netbeans.gradle.project.api.entry.GradleProjectExtension;
+import org.netbeans.gradle.javaee.web.model.NbWebModel;
+import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
  * @author Ed
  */
-public class WebModuleExtension implements GradleProjectExtension {
+public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
 
     private final Project project;
-    private final Lookup extensionLookup;
+    private Lookup permanentProjectLookup;
+    private Lookup projectLookup;
+    private Lookup extensionLookup;
 
     public WebModuleExtension(Project project) {
         this.project = project;
-        extensionLookup = Lookups.fixed(
-            new GradleWebModuleProvider(project),
-            new GradleCdiUtil(project)
-        );
     }
 
     @Override
-    public String getExtensionName() {
-        return "org.netbeans.gradle.project.javaee.WebModuleExtension";
+    public synchronized Lookup getPermanentProjectLookup() {
+        if (permanentProjectLookup == null) {
+            permanentProjectLookup = Lookups.fixed(this);
+        }
+        return permanentProjectLookup;
     }
 
     @Override
-    public Iterable<List<Class<?>>> getGradleModels() {
-        return Collections.emptyList();
+    public synchronized Lookup getProjectLookup() {
+        if (projectLookup == null) {
+            projectLookup = Lookups.fixed(
+                new GradleWebModuleProvider(project),
+                new GradleCdiUtil(project)
+            );
+        }
+        return projectLookup;
     }
 
     @Override
-    public Lookup getExtensionLookup() {
+    public synchronized Lookup getExtensionLookup() {
+        if (extensionLookup == null) {
+            extensionLookup = Lookups.fixed(this);
+        }
         return extensionLookup;
     }
 
     @Override
-    public Set<String> modelsLoaded(Lookup modelLookup) {
-        return Collections.emptySet();
+    public void activateExtension(NbWebModel parsedModel) {
     }
 
     @Override
-    public Map<File, Lookup> deduceModelsForProjects(Lookup modelLookup) {
-        return Collections.emptyMap();
+    public void deactivateExtension() {
     }
 
 }

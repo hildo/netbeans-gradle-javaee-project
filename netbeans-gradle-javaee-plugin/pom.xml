@@ -112,7 +112,7 @@
         <dependency>
             <groupId>com.github.kelemen</groupId>
             <artifactId>netbeans-gradle-plugin</artifactId>
-            <version>1.2.8</version>
+            <version>1.2.8.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
