@@ -19,10 +19,11 @@ import org.openide.util.lookup.Lookups;
  */
 public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
 
-    private final Project project;
+    private final Project project; // NetBeans project
     private Lookup permanentProjectLookup;
     private Lookup projectLookup;
     private Lookup extensionLookup;
+    private NbWebModel currentModel; // NetBeans Gradle Web Model
 
     public WebModuleExtension(Project project) {
         this.project = project;
@@ -40,8 +41,8 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
     public synchronized Lookup getProjectLookup() {
         if (projectLookup == null) {
             projectLookup = Lookups.fixed(
-                new GradleWebModuleProvider(project),
-                new GradleCdiUtil(project)
+                new GradleWebModuleProvider(this),
+                new GradleCdiUtil(this)
             );
         }
         return projectLookup;
@@ -57,10 +58,19 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
 
     @Override
     public void activateExtension(NbWebModel parsedModel) {
+        currentModel = parsedModel;
     }
 
     @Override
     public void deactivateExtension() {
+        currentModel = null;
     }
 
+    public NbWebModel getCurrentModel() {
+        return currentModel;
+    }
+
+    public Project getProject() {
+        return project;
+    }
 }

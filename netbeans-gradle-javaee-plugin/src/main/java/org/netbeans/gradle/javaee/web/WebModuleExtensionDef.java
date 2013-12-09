@@ -9,9 +9,6 @@ package org.netbeans.gradle.javaee.web;
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.gradle.javaee.web.model.NbWebModelBuilder;
-import org.netbeans.gradle.model.api.GradleProjectInfoQuery;
-import org.netbeans.gradle.model.api.ModelClassPathDef;
-import org.netbeans.gradle.model.api.ProjectInfoBuilder;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtensionDef;
 import org.netbeans.gradle.project.api.entry.ModelLoadResult;
@@ -23,8 +20,10 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -35,7 +34,8 @@ import java.util.logging.Logger;
 @ServiceProvider(service = GradleProjectExtensionDef.class, position = 800)
 public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebModel> {
 
-    private static final Logger LOGGER = Logger.getLogger(WebModuleExtensionDef.class.getName());
+    private static Logger LOGGER = Logger.getLogger(WebModuleExtensionDef.class.getName());
+
     private static final String EXTENSION_NAME = "org.netbeans.gradle.javaee.web.WebModuleExtensionDef";
 
     private final Lookup extensionLookup;
@@ -66,14 +66,25 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
 
     @Override
     public ParsedModel<NbWebModel> parseModel(ModelLoadResult retrievedModels) {
-        LOGGER.info("in parseModel");
-        LOGGER.info(retrievedModels.getMainProjectDir().toString());
-        return null;
+        LOGGER.entering(this.getClass().getName(), "parseModel", retrievedModels);
+        ParsedModel<NbWebModel> returnValue = null;
+        Map<File, Lookup> allLookups = retrievedModels.getEvaluatedProjectsModel();
+        for (Lookup lookup: allLookups.values()) {
+            NbWebModel webModel = lookup.lookup(NbWebModel.class);
+            if (webModel != null) {
+                returnValue = new ParsedModel(webModel);
+            }
+        }
+        LOGGER.exiting(this.getClass().getName(), "parseModel", returnValue);
+        return returnValue;
     }
 
     @Override
     public GradleProjectExtension2<NbWebModel> createExtension(Project project) throws IOException {
-        return new WebModuleExtension(project);
+        LOGGER.entering(this.getClass().getName(), "createExtension", project);
+        GradleProjectExtension2<NbWebModel> returnValue = new WebModuleExtension(project);
+        LOGGER.exiting(this.getClass().getName(), "createExtension", returnValue);
+        return returnValue;
     }
 
     @Override
@@ -83,28 +94,12 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
 
     private static final class Query2 implements GradleModelDefQuery2 {
 
-        private static final GradleModelDef RESULT = GradleModelDef.fromProjectQueries(
-                toQuery(NbWebModelBuilder.INSTANCE)
-        );
+        private static final GradleModelDef RESULT = GradleModelDef.fromProjectInfoBuilders(NbWebModelBuilder.INSTANCE);
 
         @Override
         public GradleModelDef getModelDef(GradleTarget gradleTarget) {
             return RESULT;
         }
-    }
-
-    private static <T> GradleProjectInfoQuery<T> toQuery(final ProjectInfoBuilder<T> builder) {
-        return new GradleProjectInfoQuery<T>() {
-            @Override
-            public ProjectInfoBuilder<T> getInfoBuilder() {
-                return builder;
-            }
-
-            @Override
-            public ModelClassPathDef getInfoClassPath() {
-                return ModelClassPathDef.EMPTY;
-            }
-        };
     }
 
 }

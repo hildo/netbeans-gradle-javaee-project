@@ -23,20 +23,20 @@ public class GradleWebModuleProvider implements WebModuleProvider {
 
     private static final Logger LOGGER = Logger.getLogger(GradleWebModuleProvider.class.getName());
 
-    private final Project project;
+    private final WebModuleExtension webExt;
     private WebModule webModule;
 
-    public GradleWebModuleProvider(Project project) {
-        this.project = project;
+    public GradleWebModuleProvider(WebModuleExtension webExt) {
+        this.webExt = webExt;
     }
 
     @Override
     public WebModule findWebModule(FileObject fo) {
         LOGGER.entering(GradleWebModuleProvider.class.getName(), "findWebModule");
         WebModule returnValue = null;
-        if (project != null) {
+        if (webExt != null) {
             Project fileOwner = FileOwnerQuery.getOwner(fo);
-            if (project.equals(fileOwner)) {
+            if (webExt.getProject().equals(fileOwner)) {
                 returnValue = getWebModule();
             }
         }
@@ -53,7 +53,7 @@ public class GradleWebModuleProvider implements WebModuleProvider {
 
     private synchronized void initWebModule() {
         if (webModule == null) {
-            webModule = WebModuleFactory.createWebModule(new GradleWebModuleImpl(project));
+            webModule = WebModuleFactory.createWebModule(new GradleWebModuleImpl(webExt));
         }
     }
 
