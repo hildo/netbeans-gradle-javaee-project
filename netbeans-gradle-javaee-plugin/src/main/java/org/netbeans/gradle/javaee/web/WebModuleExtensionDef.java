@@ -16,6 +16,7 @@ import org.netbeans.gradle.project.api.entry.ParsedModel;
 import org.netbeans.gradle.project.api.modelquery.GradleModelDef;
 import org.netbeans.gradle.project.api.modelquery.GradleModelDefQuery2;
 import org.netbeans.gradle.project.api.modelquery.GradleTarget;
+import org.openide.modules.SpecificationVersion;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 @ServiceProvider(service = GradleProjectExtensionDef.class, position = 800)
 public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebModel> {
 
-    private static Logger LOGGER = Logger.getLogger(WebModuleExtensionDef.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WebModuleExtensionDef.class.getName());
 
     private static final String EXTENSION_NAME = "org.netbeans.gradle.javaee.web.WebModuleExtensionDef";
 
@@ -68,12 +69,9 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
     public ParsedModel<NbWebModel> parseModel(ModelLoadResult retrievedModels) {
         LOGGER.entering(this.getClass().getName(), "parseModel", retrievedModels);
         ParsedModel<NbWebModel> returnValue = null;
-        Map<File, Lookup> allLookups = retrievedModels.getEvaluatedProjectsModel();
-        for (Lookup lookup: allLookups.values()) {
-            NbWebModel webModel = lookup.lookup(NbWebModel.class);
-            if (webModel != null) {
-                returnValue = new ParsedModel(webModel);
-            }
+        NbWebModel webModel = retrievedModels.getMainProjectModels().lookup(NbWebModel.class);
+        if (webModel != null) {
+            returnValue = new ParsedModel(webModel);
         }
         LOGGER.exiting(this.getClass().getName(), "parseModel", returnValue);
         return returnValue;
@@ -94,10 +92,14 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
 
     private static final class Query2 implements GradleModelDefQuery2 {
 
+        private static final SpecificationVersion MINIMUM_JDK_VERSION = new SpecificationVersion("1.7");
         private static final GradleModelDef RESULT = GradleModelDef.fromProjectInfoBuilders(NbWebModelBuilder.INSTANCE);
 
         @Override
         public GradleModelDef getModelDef(GradleTarget gradleTarget) {
+            if (gradleTarget.getJavaVersion().compareTo(MINIMUM_JDK_VERSION) < 0) {
+                return GradleModelDef.EMPTY;
+            }
             return RESULT;
         }
     }

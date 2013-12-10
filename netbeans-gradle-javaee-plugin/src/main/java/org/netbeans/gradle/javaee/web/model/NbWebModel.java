@@ -24,17 +24,12 @@ public final class NbWebModel implements Serializable {
     private static final long serialVersionUID = 2209710889385730864L;
     private static final Logger LOGGER = Logger.getLogger(NbWebModel.class.getName());
 
-    private String webAppDir;
-    private String deploymentDescName = "web.xml";
+    private final String webAppDir;
+    private final String deploymentDescName;
 
-    public void loadFromGradleProject(Project project) {
-        LOGGER.entering(this.getClass().getName(), "loadFromGradleProject", project);
-        webAppDir = (String) project.getProperties().get("webAppDirName"); // Use webAppDirName
-        File deploymentDesc = (File) project.getProperties().get("webXml");
-        if (deploymentDesc != null) {
-            deploymentDescName = deploymentDesc.getName();
-        }
-        LOGGER.exiting(this.getClass().getName(), "loadFromGradleProject");
+    private NbWebModel(String webAppDir, String deploymentDescName) {
+        this.webAppDir = webAppDir;
+        this.deploymentDescName = deploymentDescName;
     }
 
     public String getWebAppDir() {
@@ -44,4 +39,17 @@ public final class NbWebModel implements Serializable {
     public String getDeploymentDescName() {
         return deploymentDescName;
     }
+
+    public static NbWebModel createModel(Project project) {
+        LOGGER.entering(NbWebModel.class.getName(), "createModel", project);
+        String webAppDirValue = (String) project.getProperties().get("webAppDirName"); // Use webAppDirName
+        String ddValue = "web.xml";
+        File deploymentDesc = (File) project.getProperties().get("webXml");
+        if (deploymentDesc != null) {
+            ddValue = deploymentDesc.getName();
+        }
+        LOGGER.exiting(NbWebModel.class.getName(), "createModel");
+        return new NbWebModel(webAppDirValue, ddValue);
+    }
+
 }
