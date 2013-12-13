@@ -28,7 +28,7 @@ public class NbWebModelBuilder implements ProjectInfoBuilder<NbWebModel>{
         LOGGER.entering(this.getClass().getName(), "getProjectInfo", project);
         NbWebModel returnValue = null;
         if (project.getPlugins().hasPlugin("war")) {
-            LOGGER.info("Have WAR plugin");
+            LOGGER.finer("Have WAR plugin");
             returnValue = NbWebModel.createModel(project);
         }
         LOGGER.exiting(this.getClass().getName(), "getProjectInfo", returnValue);

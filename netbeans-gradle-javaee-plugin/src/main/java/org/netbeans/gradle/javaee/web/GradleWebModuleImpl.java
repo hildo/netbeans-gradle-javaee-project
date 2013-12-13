@@ -8,7 +8,6 @@ package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.j2ee.core.Profile;
 import org.netbeans.api.java.classpath.ClassPath;
-import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.modules.j2ee.dd.api.web.WebAppMetadata;
 import org.netbeans.modules.j2ee.dd.spi.MetadataUnit;
@@ -62,7 +61,6 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
             if (webInf != null) {
                 deploymentDescriptor = webInf.getFileObject(model.getDeploymentDescName());
             }
-            // TODO Use real sources from Gradle project
             FileObject javaSource = documentBase.getFileObject("src/main/java");
             javaSources = new FileObject[] { javaSource };
         }

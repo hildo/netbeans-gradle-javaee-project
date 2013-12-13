@@ -6,7 +6,6 @@
 
 package org.netbeans.gradle.javaee.web.beans;
 
-import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.WebModuleExtension;
 import org.netbeans.modules.web.beans.CdiUtil;
 import org.openide.filesystems.FileObject;
