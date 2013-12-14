@@ -8,6 +8,11 @@ package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.j2ee.core.Profile;
 import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.project.JavaProjectConstants;
+import org.netbeans.api.project.Project;
+import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.api.project.SourceGroup;
+import org.netbeans.api.project.Sources;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.modules.j2ee.dd.api.web.WebAppMetadata;
 import org.netbeans.modules.j2ee.dd.spi.MetadataUnit;
@@ -61,9 +66,22 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
             if (webInf != null) {
                 deploymentDescriptor = webInf.getFileObject(model.getDeploymentDescName());
             }
-            FileObject javaSource = documentBase.getFileObject("src/main/java");
-            javaSources = new FileObject[] { javaSource };
+            javaSources = getSourcesForNBProject(webExt.getProject());
         }
+    }
+
+    private FileObject[] getSourcesForNBProject(Project project) {
+        Sources sources = ProjectUtils.getSources(project);
+        if (sources == null) {
+            return new FileObject[0];
+        }
+        SourceGroup[] groups = sources.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
+        FileObject[] returnValue = new FileObject[groups.length];
+        int idx = 0;
+        for (SourceGroup group : groups) {
+            returnValue[idx++] = group.getRootFolder();
+        }
+        return returnValue;
     }
 
     @Override
