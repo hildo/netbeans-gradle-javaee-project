@@ -7,10 +7,10 @@
 package org.netbeans.gradle.javaee.web;
 
 import org.netbeans.api.project.Project;
-import org.netbeans.gradle.javaee.web.beans.GradleCdiUtil;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.gradle.javaee.web.nodes.WebModuleExtensionNodes;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
+import org.netbeans.modules.web.beans.WebCdiUtil;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -44,7 +44,7 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
         if (projectLookup == null) {
             projectLookup = Lookups.fixed(
                 new GradleWebModuleProvider(this),
-                new GradleCdiUtil(this)
+                new WebCdiUtil(project)
             );
         }
         return projectLookup;
