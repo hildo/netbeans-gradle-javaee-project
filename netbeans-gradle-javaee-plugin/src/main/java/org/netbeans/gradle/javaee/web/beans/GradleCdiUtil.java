@@ -33,11 +33,13 @@ public class GradleCdiUtil extends CdiUtil {
     public boolean isCdiEnabled() {
         LOGGER.entering(this.getClass().getName(), "isCdiEnabled");
         boolean returnValue = false;
-        FileObject webInf = getProject().getProjectDirectory().getFileObject(
-                webExt.getCurrentModel().getWebAppDir() + "/WEB-INF");
-        if (webInf != null) {
-            FileObject beansXml = webInf.getFileObject("beans.xml");
-            returnValue = (beansXml != null);
+        FileObject webDir = webExt.getWebDir();
+        if (webDir != null) {
+            FileObject webInf = webDir.getFileObject("/WEB-INF");
+            if (webInf != null) {
+                FileObject beansXml = webInf.getFileObject("beans.xml");
+                returnValue = (beansXml != null);
+            }
         }
         LOGGER.exiting(this.getClass().getName(), "isCdiEnabled", returnValue);
         return returnValue;

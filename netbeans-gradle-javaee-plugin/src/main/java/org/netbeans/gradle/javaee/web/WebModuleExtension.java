@@ -9,7 +9,9 @@ package org.netbeans.gradle.javaee.web;
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.beans.GradleCdiUtil;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
+import org.netbeans.gradle.javaee.web.nodes.WebModuleExtensionNodes;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
+import org.openide.filesystems.FileObject;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
@@ -51,7 +53,9 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
     @Override
     public synchronized Lookup getExtensionLookup() {
         if (extensionLookup == null) {
-            extensionLookup = Lookups.fixed(this);
+            extensionLookup = Lookups.fixed(
+                    new WebModuleExtensionNodes(this)
+            );
         }
         return extensionLookup;
     }
@@ -73,4 +77,9 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
     public Project getProject() {
         return project;
     }
+
+    public FileObject getWebDir() {
+        return project.getProjectDirectory().getFileObject(currentModel.getWebAppDir());
+    }
+
 }
