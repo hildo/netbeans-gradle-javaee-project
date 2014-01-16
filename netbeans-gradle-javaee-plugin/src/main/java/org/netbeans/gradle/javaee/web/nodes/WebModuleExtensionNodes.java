@@ -7,7 +7,6 @@
 package org.netbeans.gradle.javaee.web.nodes;
 
 import org.netbeans.gradle.javaee.web.WebModuleExtension;
-import org.netbeans.gradle.javaee.web.WebModuleExtensionDef;
 import org.netbeans.gradle.project.api.event.NbListenerRef;
 import org.netbeans.gradle.project.api.nodes.GradleProjectExtensionNodes;
 import org.netbeans.gradle.project.api.nodes.SingleNodeFactory;
@@ -27,6 +26,7 @@ import java.util.logging.Logger;
 public class WebModuleExtensionNodes implements GradleProjectExtensionNodes {
 
     private static final Logger LOGGER = Logger.getLogger(WebModuleExtensionNodes.class.getName());
+    private static final NbListenerRef NOOP_LISTENER = new EmptyListenerRef();
 
     private final WebModuleExtension webModule;
 
@@ -36,7 +36,7 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes {
 
     @Override
     public NbListenerRef addNodeChangeListener(Runnable r) {
-        return null;
+        return NOOP_LISTENER;
     }
 
     @Override
@@ -66,4 +66,16 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes {
         }
     }
 
+    private static final class EmptyListenerRef implements NbListenerRef {
+
+        @Override
+        public boolean isRegistered() {
+            return false;
+        }
+
+        @Override
+        public void unregister() {
+        }
+
+    }
 }
