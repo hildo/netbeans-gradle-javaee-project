@@ -6,6 +6,8 @@
 
 package org.netbeans.gradle.javaee.web;
 
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.gradle.javaee.web.nodes.WebModuleExtensionNodes;
@@ -25,10 +27,12 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
     private Lookup permanentProjectLookup;
     private Lookup projectLookup;
     private Lookup extensionLookup;
-    private NbWebModel currentModel; // NetBeans Gradle Web Model
+
+    private final AtomicReference<NbWebModel> currentModelRef;
 
     public WebModuleExtension(Project project) {
         this.project = project;
+        this.currentModelRef = new AtomicReference<>(null);
     }
 
     @Override
@@ -62,16 +66,19 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
 
     @Override
     public void activateExtension(NbWebModel parsedModel) {
-        currentModel = parsedModel;
+        NbWebModel prevModel = currentModelRef.getAndSet(parsedModel);
+        for (ModelReloadListener listener: getExtensionLookup().lookupAll(ModelReloadListener.class)) {
+            listener.onModelChange(prevModel, parsedModel);
+        }
     }
 
     @Override
     public void deactivateExtension() {
-        currentModel = null;
+        activateExtension(null);
     }
 
     public NbWebModel getCurrentModel() {
-        return currentModel;
+        return currentModelRef.get();
     }
 
     public Project getProject() {
@@ -79,7 +86,10 @@ public class WebModuleExtension implements GradleProjectExtension2<NbWebModel> {
     }
 
     public FileObject getWebDir() {
-        return project.getProjectDirectory().getFileObject(currentModel.getWebAppDir());
+        NbWebModel model = getCurrentModel();
+        return model != null
+                ? project.getProjectDirectory().getFileObject(model.getWebAppDir())
+                : null;
     }
 
 }
