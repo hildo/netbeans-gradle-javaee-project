@@ -71,15 +71,32 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
     }
 
     private FileObject[] getSourcesForNBProject(Project project) {
+        SourceGroup[] groups = null;
         Sources sources = ProjectUtils.getSources(project);
-        if (sources == null) {
-            return new FileObject[0];
+        if (sources != null) {
+            groups = sources.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
         }
-        SourceGroup[] groups = sources.getSourceGroups(JavaProjectConstants.SOURCES_TYPE_JAVA);
-        FileObject[] returnValue = new FileObject[groups.length];
+        return constructSourceObject(documentBase, groups);
+    }
+    
+    // Sources, plus documentBase
+    private FileObject[] constructSourceObject(FileObject webAppDir, SourceGroup[] groups) {
+        int sourcesLength = 0;
+        if (webAppDir != null) {
+            sourcesLength += 1;
+        }
+        if (groups != null) {
+            sourcesLength += groups.length;
+        }
+        FileObject[] returnValue = new FileObject[sourcesLength];
         int idx = 0;
-        for (SourceGroup group : groups) {
-            returnValue[idx++] = group.getRootFolder();
+        if (groups != null) {
+            for (SourceGroup group : groups) {
+                returnValue[idx++] = group.getRootFolder();
+            }
+        }
+        if (webAppDir != null) {
+            returnValue[idx] = webAppDir;
         }
         return returnValue;
     }
