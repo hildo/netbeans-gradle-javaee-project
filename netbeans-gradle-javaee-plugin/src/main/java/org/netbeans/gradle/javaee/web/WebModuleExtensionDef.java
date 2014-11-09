@@ -6,6 +6,11 @@
 
 package org.netbeans.gradle.javaee.web;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.web.model.NbWebModel;
 import org.netbeans.gradle.javaee.web.model.NbWebModelBuilder;
@@ -21,16 +26,11 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Ed
  */
-@ServiceProvider(service = GradleProjectExtensionDef.class, position = 800)
+@ServiceProvider(service = GradleProjectExtensionDef.class)
 public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebModel> {
 
     private static final Logger LOGGER = Logger.getLogger(WebModuleExtensionDef.class.getName());
