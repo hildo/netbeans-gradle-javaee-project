@@ -170,6 +170,9 @@
                     <keystore>${keystore.location}</keystore>
                     <keystorealias>${keystore.alias}</keystorealias>
                     <keystorepassword>${keystore.password}</keystorepassword>
+                    <publicPackages>
+                        <publicPackage>org.netbeans.gradle.javaee.web</publicPackage>
+                    </publicPackages>
                 </configuration>
             </plugin>
 

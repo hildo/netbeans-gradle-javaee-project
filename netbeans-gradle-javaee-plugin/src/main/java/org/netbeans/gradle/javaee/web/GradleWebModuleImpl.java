@@ -6,6 +6,10 @@
 
 package org.netbeans.gradle.javaee.web;
 
+import java.beans.PropertyChangeListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.netbeans.api.j2ee.core.Profile;
 import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.api.java.project.JavaProjectConstants;
@@ -22,10 +26,6 @@ import org.netbeans.modules.web.spi.webmodule.WebModuleImplementation2;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
-import java.beans.PropertyChangeListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author Ed
@@ -38,7 +38,6 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
     private FileObject documentBase;
     private FileObject webInf;
     private FileObject deploymentDescriptor;
-    private FileObject[] javaSources;
 
     public GradleWebModuleImpl(WebModuleExtension webExt) {
         this.webExt = webExt;
@@ -66,7 +65,6 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
             if (webInf != null) {
                 deploymentDescriptor = webInf.getFileObject(model.getDeploymentDescName());
             }
-            javaSources = getSourcesForNBProject(webExt.getProject());
         }
     }
 
@@ -115,7 +113,7 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
 
     @Override
     public FileObject[] getJavaSources() {
-        return javaSources;
+        return getSourcesForNBProject(webExt.getProject());
     }
 
     @Override

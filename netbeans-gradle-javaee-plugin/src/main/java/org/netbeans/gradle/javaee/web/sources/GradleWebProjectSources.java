@@ -8,13 +8,10 @@ package org.netbeans.gradle.javaee.web.sources;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.event.ChangeListener;
 
-import org.netbeans.api.java.project.JavaProjectConstants;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
 import org.netbeans.gradle.javaee.web.WebModuleExtension;
@@ -27,7 +24,7 @@ import org.openide.filesystems.FileUtil;
  */
 public class GradleWebProjectSources implements Sources {
     
-    private static final Logger LOGGER = Logger.getLogger(GradleWebProjectSources.class.getName());
+    private static final String DOC_ROOT = "doc_root";
 
     private final WebModuleExtension webExt;
 
@@ -37,9 +34,8 @@ public class GradleWebProjectSources implements Sources {
 
     @Override
     public SourceGroup[] getSourceGroups(String sourceGroupType) {
-        LOGGER.log(Level.INFO, "-----> {0}", sourceGroupType);
-        if (JavaProjectConstants.SOURCES_TYPE_RESOURCES.equals(sourceGroupType)) {
-            return new SourceGroup[]{new GradleSourceGroup(webExt.getWebDir(), "Web Resources")};
+        if (DOC_ROOT.equals(sourceGroupType)) {
+            return new SourceGroup[]{new GradleSourceGroup(webExt.getWebDir(), "Web Resources [doc_root]")};
         } else {
             return new SourceGroup[0];
         }
@@ -62,7 +58,6 @@ public class GradleWebProjectSources implements Sources {
         private final String displayName;
 
         public GradleSourceGroup(FileObject location, String displayName) {
-            LOGGER.log(Level.INFO, "Creating GradleSourceGroup({0},{1})", new Object[]{location.toString(), displayName});
             this.location = location;
             this.displayName = displayName;
             this.changes = new PropertyChangeSupport(this);

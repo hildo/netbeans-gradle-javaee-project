@@ -6,14 +6,14 @@
 
 package org.netbeans.gradle.javaee.web;
 
+import java.util.logging.Logger;
+
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.web.api.webmodule.WebModule;
 import org.netbeans.modules.web.spi.webmodule.WebModuleFactory;
 import org.netbeans.modules.web.spi.webmodule.WebModuleProvider;
 import org.openide.filesystems.FileObject;
-
-import java.util.logging.Logger;
 
 /**
  *
@@ -24,7 +24,7 @@ public class GradleWebModuleProvider implements WebModuleProvider {
     private static final Logger LOGGER = Logger.getLogger(GradleWebModuleProvider.class.getName());
 
     private final WebModuleExtension webExt;
-    private WebModule webModule;
+    private volatile WebModule webModule;
 
     public GradleWebModuleProvider(WebModuleExtension webExt) {
         this.webExt = webExt;
