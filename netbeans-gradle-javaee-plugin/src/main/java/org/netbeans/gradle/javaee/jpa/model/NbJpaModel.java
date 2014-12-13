@@ -19,7 +19,7 @@ public final class NbJpaModel implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(NbJpaModel.class.getName());
     private final String persistenceFile;
     
-    private NbJpaModel(String persistenceFile) {
+    public NbJpaModel(String persistenceFile) {
         this.persistenceFile = persistenceFile;
     }
     
@@ -27,9 +27,4 @@ public final class NbJpaModel implements Serializable {
         return persistenceFile;
     }
 
-    public static NbJpaModel createModel(Project project) {
-        LOGGER.info(project.getProperties().toString());
-        return null;
-    }
-    
 }
