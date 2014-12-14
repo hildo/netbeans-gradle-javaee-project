@@ -6,10 +6,12 @@
 package org.netbeans.gradle.javaee.jpa;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.netbeans.api.project.Project;
 import org.netbeans.gradle.javaee.jpa.model.NbJpaModel;
-import org.netbeans.gradle.javaee.web.ModelReloadListener;
+import org.netbeans.gradle.javaee.jpa.verification.GradlePersistenceScopesProvider;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -20,10 +22,12 @@ import org.openide.util.lookup.Lookups;
  */
 public class JpaModuleExtension implements GradleProjectExtension2<NbJpaModel> {
 
+    private static final Logger LOGGER = Logger.getLogger(JpaModuleExtension.class.getName());
+    
     private final Project project; // NetBeans project
     private Lookup permanentProjectLookup;
     private Lookup projectLookup;
-    private Lookup extensionLookup;
+    private final Lookup extensionLookup = Lookups.fixed();
 
     private final AtomicReference<NbJpaModel> currentModelRef;
 
@@ -32,6 +36,19 @@ public class JpaModuleExtension implements GradleProjectExtension2<NbJpaModel> {
         this.currentModelRef = new AtomicReference<>(null);
     }
 
+    /**
+     * Returns the NetBeans <code>Project</code> for the extension
+     * 
+     * @return a Project object
+     */
+    public Project getProject() {
+        return project;
+    }
+    
+    public NbJpaModel getCurrentModel() {
+        return currentModelRef.get();
+    }
+    
     @Override
     public Lookup getPermanentProjectLookup() {
         if (permanentProjectLookup == null) {
@@ -43,26 +60,24 @@ public class JpaModuleExtension implements GradleProjectExtension2<NbJpaModel> {
     @Override
     public Lookup getProjectLookup() {
         if (projectLookup == null) {
-//            projectLookup = Lookups.fixed(
-//                new GradleWebModuleProvider(this),
-//                new WebCdiUtil(project),
-//                new GradleWebProjectSources(this)
-//            );
+            projectLookup = Lookups.fixed(
+                new GradlePersistenceScopesProvider(this)
+            );
         }
         return projectLookup;
     }
 
     @Override
     public Lookup getExtensionLookup() {
-        return null;
+        return extensionLookup;
     }
 
     @Override
     public void activateExtension(NbJpaModel parsedModel) {
-        NbJpaModel prevModel = currentModelRef.getAndSet(parsedModel);
-//        for (ModelReloadListener listener: getExtensionLookup().lookupAll(ModelReloadListener.class)) {
-//            listener.onModelChange(prevModel, parsedModel);
-//        }
+        if (parsedModel != null) {
+            LOGGER.log(Level.INFO, "activating Jpa Extension with {0}", parsedModel.getPersistenceFile());
+        }
+        currentModelRef.getAndSet(parsedModel);
     }
 
     @Override

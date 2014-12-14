@@ -5,7 +5,9 @@
  */
 package org.netbeans.gradle.javaee.jpa.verification;
 
+import org.netbeans.gradle.javaee.jpa.JpaModuleExtension;
 import org.netbeans.modules.j2ee.persistence.api.PersistenceScopes;
+import org.netbeans.modules.j2ee.persistence.spi.PersistenceScopesFactory;
 import org.netbeans.modules.j2ee.persistence.spi.PersistenceScopesProvider;
 
 /**
@@ -14,9 +16,15 @@ import org.netbeans.modules.j2ee.persistence.spi.PersistenceScopesProvider;
  */
 public class GradlePersistenceScopesProvider implements PersistenceScopesProvider {
 
+    private final GradlePersistenceScopesImpl persistenceScopesImpl;
+    
+    public GradlePersistenceScopesProvider(JpaModuleExtension jpaModule) {
+        this.persistenceScopesImpl = new GradlePersistenceScopesImpl(jpaModule);
+    }
+    
     @Override
     public PersistenceScopes getPersistenceScopes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return PersistenceScopesFactory.createPersistenceScopes(persistenceScopesImpl);
     }
     
 }
