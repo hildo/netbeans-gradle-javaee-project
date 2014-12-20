@@ -18,9 +18,14 @@ import org.openide.filesystems.FileObject;
 public class GradlePersistenceScopeImpl implements PersistenceScopeImplementation {
 
     private FileObject persistenceXml;
+    private ClassPath classpath;
     
     public void setPersistenceXml(FileObject persistenceXml) {
         this.persistenceXml = persistenceXml;
+    }
+    
+    public void setClassPath(ClassPath classpath) {
+        this.classpath = classpath;
     }
     
     @Override
@@ -30,7 +35,7 @@ public class GradlePersistenceScopeImpl implements PersistenceScopeImplementatio
 
     @Override
     public ClassPath getClassPath() {
-        return ClassPath.EMPTY;
+        return classpath;
     }
 
     @Override

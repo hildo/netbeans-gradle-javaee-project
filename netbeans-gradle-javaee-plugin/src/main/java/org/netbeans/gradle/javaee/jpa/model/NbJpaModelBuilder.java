@@ -30,7 +30,10 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
         try {
             Builder builder = new Builder(project);
             if (builder.getPersistenceXmlFile() != null) {
-                returnValue = new NbJpaModel(builder.getPersistenceXmlFile());
+                returnValue = new NbJpaModel(
+                        builder.getPersistenceXmlFile(),
+                        builder.getJavaSourceDirs()
+                );
             }
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
@@ -47,23 +50,13 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
         private static volatile SourceSetMethods CACHE = null;
 
         private final GradleClass type;
-//        private final Method getOutput;
-//        private final Method getName;
-//        private final Method getJava;
+        private final Method getAllJava;
         private final Method getResources;
-//        private final Method getAllSource;
-//        private final Method getCompileClasspath;
-//        private final Method getRuntimeClasspath;
 
         private SourceSetMethods(GradleClass type) throws Exception {
             this.type = type;
-//            this.getOutput = type.getMethod("getOutput");
-//            this.getName = type.getMethod("getName");
-//            this.getJava = type.getMethod("getJava");
+            this.getAllJava = type.getMethod("getAllJava");
             this.getResources = type.getMethod("getResources");
-//            this.getAllSource = type.getMethod("getAllSource");
-//            this.getCompileClasspath = type.getMethod("getCompileClasspath");
-//            this.getRuntimeClasspath = type.getMethod("getRuntimeClasspath");
         }
 
         public static SourceSetMethods getInstance(Project project) throws Exception {
@@ -77,34 +70,13 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
             return result;
         }
 
-//        public Object getOutput(Object sourceSet) throws Exception {
-//            return getOutput.invoke(sourceSet);
-//        }
-//
-//        public String getName(Object sourceSet) throws Exception {
-//            Object result = getName.invoke(sourceSet);
-//            return result != null ? result.toString() : null;
-//        }
-//
-//        public Object getJava(Object sourceSet) throws Exception {
-//            return getJava.invoke(sourceSet);
-//        }
-
         public Object getResources(Object sourceSet) throws Exception {
             return getResources.invoke(sourceSet);
         }
-
-//        public Object getAllSource(Object sourceSet) throws Exception {
-//            return getAllSource.invoke(sourceSet);
-//        }
-//
-//        public FileCollection getCompileClasspath(Object sourceSet) throws Exception {
-//            return (FileCollection)getCompileClasspath.invoke(sourceSet);
-//        }
-//
-//        public FileCollection getRuntimeClasspath(Object sourceSet) throws Exception {
-//            return (FileCollection)getRuntimeClasspath.invoke(sourceSet);
-//        }
+        
+        public Object getAllJava(Object sourceSet) throws Exception {
+            return getAllJava.invoke(sourceSet);
+        }
     }
 
     private static final class SourceDirectorySetMethods {
@@ -140,6 +112,7 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
         private final SourceSetMethods sourceSetMethods;
         private final SourceDirectorySetMethods sourceDirectorySetMethods;
         private String persistenceXmlFile;
+        private Iterable<File> javaSourceDirs;
         
         Builder(Project project) throws Exception {
             this.project = project;
@@ -150,6 +123,10 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
         
         String getPersistenceXmlFile() {
             return persistenceXmlFile;
+        }
+        
+        Iterable<File> getJavaSourceDirs() {
+            return javaSourceDirs;
         }
         
         private void init() throws Exception {
@@ -166,9 +143,16 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
                         File persistenceXmlFileObj = new File(metaInfDir, "persistence.xml");
                         if (persistenceXmlFileObj.exists()) {
                             persistenceXmlFile = persistenceXmlFileObj.getCanonicalPath();
-                            return;
+                            break;
                         }
                     }
+                }
+                if (persistenceXmlFile != null) {
+                    // Use this sourceSet and call getAllJava, which returns a SourceDirectorySet
+                    // Then call getSrcDirs to get the ClassPath to set javaSourceDirs
+                    Object allJavaDirectorySet = sourceSetMethods.getAllJava(sourceSet);
+                    javaSourceDirs = sourceDirectorySetMethods.getSrcDirs(allJavaDirectorySet);
+                    break;
                 }
             }
         }

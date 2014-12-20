@@ -5,10 +5,8 @@
  */
 package org.netbeans.gradle.javaee.jpa.model;
 
+import java.io.File;
 import java.io.Serializable;
-import java.util.logging.Logger;
-
-import org.gradle.api.Project;
 
 /**
  *
@@ -16,15 +14,27 @@ import org.gradle.api.Project;
  */
 public final class NbJpaModel implements Serializable {
     
-    private static final Logger LOGGER = Logger.getLogger(NbJpaModel.class.getName());
     private final String persistenceFile;
+    private final Iterable<File> javaSourceDirs;
     
-    public NbJpaModel(String persistenceFile) {
+    public NbJpaModel(String persistenceFile, Iterable<File> compileClasspath) {
         this.persistenceFile = persistenceFile;
+        this.javaSourceDirs = serializableIterable(compileClasspath);
+    }
+    
+    private Iterable<File> serializableIterable(Iterable<File> iterable) {
+        java.util.ArrayList<File> returnValue = new java.util.ArrayList<>();
+        for (File file : iterable) {
+            returnValue.add(file);
+        }
+        return returnValue;
     }
     
     public String getPersistenceFile() {
         return persistenceFile;
     }
 
+    public Iterable<File> getJavaSourceDirs() {
+        return javaSourceDirs;
+    }
 }

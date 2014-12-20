@@ -7,11 +7,15 @@ package org.netbeans.gradle.javaee.jpa.verification;
 
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.URL;
+import java.util.List;
 
+import org.netbeans.api.java.classpath.ClassPath;
 import org.netbeans.gradle.javaee.jpa.JpaModuleExtension;
 import org.netbeans.modules.j2ee.persistence.api.PersistenceScope;
 import org.netbeans.modules.j2ee.persistence.spi.PersistenceScopeFactory;
 import org.netbeans.modules.j2ee.persistence.spi.PersistenceScopesImplementation;
+import org.netbeans.spi.java.classpath.support.ClassPathSupport;
 import org.openide.filesystems.FileUtil;
 
 /**
@@ -32,13 +36,24 @@ public class GradlePersistenceScopesImpl implements PersistenceScopesImplementat
         if (jpaModule.getCurrentModel() == null) {
             return EMPTY;
         }
+        
         PersistenceScope[] returnValue = new PersistenceScope[1];
         GradlePersistenceScopeImpl scope = new GradlePersistenceScopeImpl();
         scope.setPersistenceXml(
                 FileUtil.toFileObject(
                         new File(jpaModule.getCurrentModel().getPersistenceFile())));
+        scope.setClassPath(buildClasspath(jpaModule.getCurrentModel().getJavaSourceDirs()));
         returnValue[0] = PersistenceScopeFactory.createPersistenceScope(scope);
         return returnValue;
+    }
+    
+    private ClassPath buildClasspath(Iterable<File> classpath) {
+        List<URL> pathList = new java.util.ArrayList<>();
+        for (File classpathFile: classpath) {
+            pathList.add(FileUtil.urlForArchiveOrDir(classpathFile));
+        }
+        URL[] files = pathList.toArray(new URL[pathList.size()]);
+        return ClassPathSupport.createClassPath(files);
     }
     
     @Override
