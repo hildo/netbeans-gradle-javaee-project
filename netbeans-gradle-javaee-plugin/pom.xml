@@ -4,7 +4,7 @@
 
     <groupId>com.csea</groupId>
     <artifactId>netbeans-gradle-javaee-plugin</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>nbm</packaging>
     <url>https://github.com/hildo/netbeans-gradle-javaee-project</url>
 
@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE80</netbeans.version>
+        <netbeans.version>RELEASE81</netbeans.version>
     </properties>
 
     <repositories>
