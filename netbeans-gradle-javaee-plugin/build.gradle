@@ -28,8 +28,6 @@ repositories {
 version = '1.0.3'
 nbm {
     moduleName = 'netbeans-gradle-javaee-plugin';
-    
-    // ? requires('netbeans-gradle-plugin');
     requires 'cnb.org.netbeans.gradle.project'
 }
 
@@ -38,6 +36,10 @@ ext.netBeansInstallDir = 'C:/Program Files/NetBeans 8.2'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
+
+configurations {
+    pluginInstall
+}
 
 dependencies {
     providedCompile 'org.netbeans.api:org-netbeans-modules-projectapi:' + netbeansVersion
@@ -66,13 +68,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
 
-    // For Plugin-Installion prior to "run"-task only
-    providedCompile 'com.github.kelemen:netbeans-gradle-plugin:1.3.9.1@nbm'
-    providedCompile 'org.netbeans.modules:org-netbeans-modules-groovy-kit:' + netbeansVersion + '@nbm'    
+    // dev-feature: For installation of plugins required by this plugin
+    // groovy-plugin is not listed here; assumed that full NB version with groovy-support is installed by dev
+    pluginInstall 'com.github.kelemen:netbeans-gradle-plugin:1.3.9.1@nbm'
 }
 
 task extractPlugins << {
-  def nbms = project.configurations.providedCompile.findAll {it.name.endsWith(".nbm") }
+  def nbms = project.configurations.pluginInstall.findAll {it.name.endsWith(".nbm") }
   println nbms
   nbms.each { nbm ->
       def sourceFile = file(nbm)
