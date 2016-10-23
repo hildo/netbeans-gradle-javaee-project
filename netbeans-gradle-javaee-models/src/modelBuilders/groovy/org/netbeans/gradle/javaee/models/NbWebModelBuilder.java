@@ -1,33 +1,36 @@
 package org.netbeans.gradle.javaee.models;
 
-import java.util.logging.Logger;
+import java.io.File;
 
 import org.gradle.api.Project;
+import org.gradle.api.plugins.WarPluginConvention;
 import org.netbeans.gradle.model.api.ProjectInfoBuilder2;
 
 /**
  *
  * @author Ed
  */
-enum NbWebModelBuilder implements ProjectInfoBuilder2<NbWebModel>{
+enum NbWebModelBuilder implements ProjectInfoBuilder2<NbWebModel> {
     INSTANCE;
-
-    private static final Logger LOGGER = Logger.getLogger(NbWebModelBuilder.class.getName());
 
     @Override
     public NbWebModel getProjectInfo(Object project) {
-        return getProjectInfo((Project)project);
+        return getProjectInfo((Project) project);
     }
 
     private NbWebModel getProjectInfo(Project project) {
-        LOGGER.entering(this.getClass().getName(), "getProjectInfo", project);
-        NbWebModel returnValue = null;
-        if (project.getPlugins().hasPlugin("war")) {
-            LOGGER.finer("Have WAR plugin");
-            returnValue = NbWebModel.createModel(project);
+        WarPluginConvention war = project.getConvention().findPlugin(WarPluginConvention.class);
+        return war != null ? createModel(project, war) : null;
+    }
+
+    private NbWebModel createModel(Project project, WarPluginConvention war) {
+        String webAppDirValue = war.getWebAppDirName();
+        String ddValue = "web.xml";
+        File deploymentDesc = (File) project.getProperties().get("webXml");
+        if (deploymentDesc != null) {
+            ddValue = deploymentDesc.getName();
         }
-        LOGGER.exiting(this.getClass().getName(), "getProjectInfo", returnValue);
-        return returnValue;
+        return new NbWebModel(webAppDirValue, ddValue);
     }
 
     @Override

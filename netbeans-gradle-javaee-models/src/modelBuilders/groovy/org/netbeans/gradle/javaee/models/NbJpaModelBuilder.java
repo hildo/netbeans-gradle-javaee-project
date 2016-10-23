@@ -1,13 +1,13 @@
 package org.netbeans.gradle.javaee.models;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.SourceSet;
 import org.jtrim.utils.ExceptionHelper;
-import org.netbeans.gradle.javaee.models.internal.GradleClass;
-import org.netbeans.gradle.javaee.models.internal.GradleClasses;
 import org.netbeans.gradle.model.api.ProjectInfoBuilder2;
 
 /**
@@ -43,78 +43,15 @@ enum NbJpaModelBuilder implements ProjectInfoBuilder2<NbJpaModel>{
         return getClass().getName();
     }
 
-    private static final class SourceSetMethods {
-        private static volatile SourceSetMethods CACHE = null;
-
-        private final GradleClass type;
-        private final Method getAllJava;
-        private final Method getResources;
-
-        private SourceSetMethods(GradleClass type) throws Exception {
-            this.type = type;
-            this.getAllJava = type.getMethod("getAllJava");
-            this.getResources = type.getMethod("getResources");
-        }
-
-        public static SourceSetMethods getInstance(Project project) throws Exception {
-            SourceSetMethods result = CACHE;
-            GradleClass type = GradleClasses.getGradleClass(project, "org.gradle.api.tasks.SourceSet");
-            if (result != null && type.equals(result.type)) {
-                return result;
-            }
-            result = new SourceSetMethods(type);
-            CACHE = result;
-            return result;
-        }
-
-        public Object getResources(Object sourceSet) throws Exception {
-            return getResources.invoke(sourceSet);
-        }
-
-        public Object getAllJava(Object sourceSet) throws Exception {
-            return getAllJava.invoke(sourceSet);
-        }
-    }
-
-    private static final class SourceDirectorySetMethods {
-        private static volatile SourceDirectorySetMethods CACHE = null;
-
-        private final GradleClass type;
-        private final Method getSrcDirs;
-
-        public SourceDirectorySetMethods(GradleClass type) throws Exception {
-            this.type = type;
-            this.getSrcDirs = type.getMethod("getSrcDirs");
-        }
-
-        public static SourceDirectorySetMethods getInstance(Project project) throws Exception {
-            SourceDirectorySetMethods result = CACHE;
-            GradleClass type = GradleClasses.getGradleClass(project, "org.gradle.api.file.SourceDirectorySet");
-            if (result != null && type.equals(result.type)) {
-                return result;
-            }
-            result = new SourceDirectorySetMethods(type);
-            CACHE = result;
-            return result;
-        }
-
-        @SuppressWarnings("unchecked")
-        public Set<File> getSrcDirs(Object sourceDirectorySet) throws Exception {
-            return (Set<File>)getSrcDirs.invoke(sourceDirectorySet);
-        }
-    }
-
     private static class Builder {
         private final Project project;
-        private final SourceSetMethods sourceSetMethods;
-        private final SourceDirectorySetMethods sourceDirectorySetMethods;
+        //private final SourceSetMethods sourceSetMethods;
+        //private final SourceDirectorySetMethods sourceDirectorySetMethods;
         private String persistenceXmlFile;
         private Iterable<File> javaSourceDirs;
 
         Builder(Project project) throws Exception {
             this.project = project;
-            this.sourceSetMethods = SourceSetMethods.getInstance(project);
-            this.sourceDirectorySetMethods = SourceDirectorySetMethods.getInstance(project);
             init();
         }
 
@@ -127,16 +64,17 @@ enum NbJpaModelBuilder implements ProjectInfoBuilder2<NbJpaModel>{
         }
 
         private void init() throws Exception {
-            Iterable<?> sourceSets = (Iterable<?>) project.getProperties().get("sourceSets");
-            if (sourceSets == null) {
+            JavaPluginConvention java = project.getConvention().findPlugin(JavaPluginConvention.class);
+            if (java == null) {
                 return;
             }
-            for (Object sourceSet : sourceSets) {
-                Object resourceDirectorySet = sourceSetMethods.getResources(sourceSet);
-                Set<File>resourceDirectories = sourceDirectorySetMethods.getSrcDirs(resourceDirectorySet);
+
+            for (SourceSet sourceSet : java.getSourceSets()) {
+                SourceDirectorySet resourceDirectorySet = sourceSet.getResources();
+                Set<File> resourceDirectories = resourceDirectorySet.getSrcDirs();
                 for (File resourceDirectory : resourceDirectories) {
                     File metaInfDir = new File(resourceDirectory, "META-INF");
-                    if  (metaInfDir.exists()) {
+                    if (metaInfDir.exists()) {
                         File persistenceXmlFileObj = new File(metaInfDir, "persistence.xml");
                         if (persistenceXmlFileObj.exists()) {
                             persistenceXmlFile = persistenceXmlFileObj.getCanonicalPath();
@@ -145,10 +83,8 @@ enum NbJpaModelBuilder implements ProjectInfoBuilder2<NbJpaModel>{
                     }
                 }
                 if (persistenceXmlFile != null) {
-                    // Use this sourceSet and call getAllJava, which returns a SourceDirectorySet
-                    // Then call getSrcDirs to get the ClassPath to set javaSourceDirs
-                    Object allJavaDirectorySet = sourceSetMethods.getAllJava(sourceSet);
-                    javaSourceDirs = sourceDirectorySetMethods.getSrcDirs(allJavaDirectorySet);
+                    SourceDirectorySet allJavaDirectorySet = sourceSet.getAllJava();
+                    javaSourceDirs = allJavaDirectorySet.getSrcDirs();
                     break;
                 }
             }

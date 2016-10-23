@@ -20,14 +20,13 @@ import java.util.logging.Logger;
  * @author Ed
  */
 public final class NbWebModel implements Serializable {
-
     private static final long serialVersionUID = 2209710889385730864L;
     private static final Logger LOGGER = Logger.getLogger(NbWebModel.class.getName());
 
     private final String webAppDir;
     private final String deploymentDescName;
 
-    private NbWebModel(String webAppDir, String deploymentDescName) {
+    public NbWebModel(String webAppDir, String deploymentDescName) {
         this.webAppDir = webAppDir;
         this.deploymentDescName = deploymentDescName;
     }
@@ -39,17 +38,4 @@ public final class NbWebModel implements Serializable {
     public String getDeploymentDescName() {
         return deploymentDescName;
     }
-
-    public static NbWebModel createModel(Project project) {
-        LOGGER.entering(NbWebModel.class.getName(), "createModel", project);
-        String webAppDirValue = (String) project.getProperties().get("webAppDirName"); // Use webAppDirName
-        String ddValue = "web.xml";
-        File deploymentDesc = (File) project.getProperties().get("webXml");
-        if (deploymentDesc != null) {
-            ddValue = deploymentDesc.getName();
-        }
-        LOGGER.exiting(NbWebModel.class.getName(), "createModel");
-        return new NbWebModel(webAppDirValue, ddValue);
-    }
-
 }
