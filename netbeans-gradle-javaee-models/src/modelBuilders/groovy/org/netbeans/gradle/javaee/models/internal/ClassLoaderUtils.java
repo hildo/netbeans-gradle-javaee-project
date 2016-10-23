@@ -1,4 +1,4 @@
-package org.netbeans.gradle.javaee.model.util;
+package org.netbeans.gradle.javaee.models.internal;
 
 import java.io.File;
 import java.net.MalformedURLException;

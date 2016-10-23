@@ -14,8 +14,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: "cz.kubacki.nbm"
 
-
-String netbeansVersion = 'RELEASE82'
+String netbeansVersion = 'RELEASE81'
 
 repositories {
     mavenCentral()
@@ -25,14 +24,26 @@ repositories {
     maven { url 'http://dl.bintray.com/kelemen/maven' }
 }
 
-version = '1.0.3'
-nbm {
-    moduleName = 'netbeans-gradle-javaee-plugin';
-    requires 'cnb.org.netbeans.gradle.project'
+def tryGetProperty = { String name, String defaultValue ->
+    if (!project.hasProperty(name)) {
+        return defaultValue
+    }
+
+    return project.property(name)?.toString()
 }
 
+nbm {
+    moduleName = 'org.netbeans.gradle.javaee.project'
+    localizingBundle = 'org/netbeans/gradle/javaee/plugin/Bundle.properties'
 
-ext.netBeansInstallDir = 'C:/Program Files/NetBeans 8.2'
+    requires 'cnb.org.netbeans.gradle.project'
+
+    keyStore {
+        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
+        username = tryGetProperty('nbGradlePluginKeyStoreUser', '')
+        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+    }
+}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -42,6 +53,8 @@ configurations {
 }
 
 dependencies {
+    compile project(':netbeans-gradle-javaee-models')
+
     providedCompile 'org.netbeans.api:org-netbeans-modules-projectapi:' + netbeansVersion
     providedCompile 'org.netbeans.api:org-netbeans-api-annotations-common:' + netbeansVersion
     providedCompile 'org.netbeans.api:org-netbeans-modules-java-project:' + netbeansVersion
@@ -62,15 +75,15 @@ dependencies {
     providedCompile 'org.netbeans.modules:org-netbeans-modules-web-beans:' + netbeansVersion
     providedCompile 'org.netbeans.modules:org-netbeans-modules-j2ee-persistenceapi:' + netbeansVersion
     providedCompile 'org.netbeans.modules:org-netbeans-modules-projectapi-nb:' + netbeansVersion
-    
-    providedCompile 'com.github.kelemen:netbeans-gradle-plugin:1.3.9.1'
-    
+
+    providedCompile "com.github.kelemen:netbeans-gradle-plugin:${nbGradleVersion}"
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
 
     // dev-feature: For installation of plugins required by this plugin
     // groovy-plugin is not listed here; assumed that full NB version with groovy-support is installed by dev
-    pluginInstall 'com.github.kelemen:netbeans-gradle-plugin:1.3.9.1@nbm'
+    pluginInstall "com.github.kelemen:netbeans-gradle-plugin:${nbGradleVersion}@nbm"
 }
 
 task extractPlugins << {
@@ -88,7 +101,7 @@ task extractPlugins << {
 
 task installPlugins(type: Copy, dependsOn: extractPlugins) {
     from "${buildDir}/tmp/plugins/netbeans"
-    into "${buildDir}/testuserdir"
+    into "${buildDir}/module"
 }
 
 run.dependsOn installPlugins

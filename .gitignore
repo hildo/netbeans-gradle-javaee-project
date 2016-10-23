@@ -1,2 +1,13 @@
-/netbeans-gradle-javaee-plugin/nbproject/private/
-/netbeans-gradle-javaee-plugin/target/
+/*/nb-configuration.xml
+/nbproject/
+/*/nbproject/
+/*/target/
+/*/build/
+/netbeans-gradle-javaee-models/gradle-api/
+.gradle/
+/.nb-gradle-properties
+.nb-gradle/
+
+# Directories left from old Ant project
+/build/
+/nbproject/private/

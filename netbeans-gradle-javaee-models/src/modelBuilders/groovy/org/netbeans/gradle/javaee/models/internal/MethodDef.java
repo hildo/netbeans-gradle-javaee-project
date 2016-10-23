@@ -1,9 +1,7 @@
-package org.netbeans.gradle.javaee.model.gradleclasses;
+package org.netbeans.gradle.javaee.models.internal;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-
-import org.netbeans.gradle.javaee.model.util.ReflectionUtils;
 
 public final class MethodDef {
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];

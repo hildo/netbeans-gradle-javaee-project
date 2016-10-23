@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package org.netbeans.gradle.javaee.web.model;
+package org.netbeans.gradle.javaee.models;
 
 import org.gradle.api.Project;
 

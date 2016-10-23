@@ -17,7 +17,7 @@ import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectUtils;
 import org.netbeans.api.project.SourceGroup;
 import org.netbeans.api.project.Sources;
-import org.netbeans.gradle.javaee.web.model.NbWebModel;
+import org.netbeans.gradle.javaee.models.NbWebModel;
 import org.netbeans.modules.j2ee.dd.api.web.WebAppMetadata;
 import org.netbeans.modules.j2ee.dd.spi.MetadataUnit;
 import org.netbeans.modules.j2ee.dd.spi.web.WebAppMetadataModelFactory;
@@ -112,6 +112,7 @@ public class GradleWebModuleImpl implements WebModuleImplementation2 {
     }
 
     @Override
+    @Deprecated
     public FileObject[] getJavaSources() {
         return getSourcesForNBProject(webExt.getProject());
     }

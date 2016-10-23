@@ -1,31 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.netbeans.gradle.javaee.jpa.model;
+package org.netbeans.gradle.javaee.models;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.gradle.api.Project;
-import org.netbeans.gradle.javaee.model.gradleclasses.GradleClass;
-import org.netbeans.gradle.javaee.model.gradleclasses.GradleClasses;
-import org.netbeans.gradle.model.api.ProjectInfoBuilder;
+import org.jtrim.utils.ExceptionHelper;
+import org.netbeans.gradle.javaee.models.internal.GradleClass;
+import org.netbeans.gradle.javaee.models.internal.GradleClasses;
+import org.netbeans.gradle.model.api.ProjectInfoBuilder2;
 
 /**
  *
  * @author ed
  */
-public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
+enum NbJpaModelBuilder implements ProjectInfoBuilder2<NbJpaModel>{
+    INSTANCE;
 
-    private static final String NAME = "org.netbeans.gradle.javaee.jpa.model.NbJpaModelBuilder";
-    
-    public static final NbJpaModelBuilder INSTANCE = new NbJpaModelBuilder();
-    
     @Override
-    public NbJpaModel getProjectInfo(Project project) {
+    public NbJpaModel getProjectInfo(Object project) {
+        return getProjectInfo((Project)project);
+    }
+
+    private NbJpaModel getProjectInfo(Project project) {
         NbJpaModel returnValue = null;
         try {
             Builder builder = new Builder(project);
@@ -36,16 +33,16 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
                 );
             }
         } catch (Exception ex) {
-            ex.printStackTrace(System.out);
+            throw ExceptionHelper.throwUnchecked(ex);
         }
         return returnValue;
     }
-    
+
     @Override
     public String getName() {
-        return NAME;
+        return getClass().getName();
     }
-    
+
     private static final class SourceSetMethods {
         private static volatile SourceSetMethods CACHE = null;
 
@@ -73,7 +70,7 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
         public Object getResources(Object sourceSet) throws Exception {
             return getResources.invoke(sourceSet);
         }
-        
+
         public Object getAllJava(Object sourceSet) throws Exception {
             return getAllJava.invoke(sourceSet);
         }
@@ -106,29 +103,29 @@ public class NbJpaModelBuilder implements ProjectInfoBuilder<NbJpaModel>{
             return (Set<File>)getSrcDirs.invoke(sourceDirectorySet);
         }
     }
-    
+
     private static class Builder {
         private final Project project;
         private final SourceSetMethods sourceSetMethods;
         private final SourceDirectorySetMethods sourceDirectorySetMethods;
         private String persistenceXmlFile;
         private Iterable<File> javaSourceDirs;
-        
+
         Builder(Project project) throws Exception {
             this.project = project;
             this.sourceSetMethods = SourceSetMethods.getInstance(project);
             this.sourceDirectorySetMethods = SourceDirectorySetMethods.getInstance(project);
             init();
         }
-        
+
         String getPersistenceXmlFile() {
             return persistenceXmlFile;
         }
-        
+
         Iterable<File> getJavaSourceDirs() {
             return javaSourceDirs;
         }
-        
+
         private void init() throws Exception {
             Iterable<?> sourceSets = (Iterable<?>) project.getProperties().get("sourceSets");
             if (sourceSets == null) {

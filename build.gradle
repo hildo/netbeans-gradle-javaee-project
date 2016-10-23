@@ -1,0 +1,8 @@
+allprojects {
+    group = 'com.github.hildo'
+    version = '1.0.3'
+
+    ext {
+        nbGradleVersion = '1.3.9.1'
+    }
+}

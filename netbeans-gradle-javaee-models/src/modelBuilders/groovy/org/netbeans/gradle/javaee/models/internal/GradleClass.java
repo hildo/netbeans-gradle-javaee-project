@@ -1,11 +1,10 @@
-package org.netbeans.gradle.javaee.model.gradleclasses;
+package org.netbeans.gradle.javaee.models.internal;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.gradle.api.Project;
-import org.netbeans.gradle.javaee.model.util.ClassLoaderUtils;
 
 public final class GradleClass {
     private final Class<?> type;

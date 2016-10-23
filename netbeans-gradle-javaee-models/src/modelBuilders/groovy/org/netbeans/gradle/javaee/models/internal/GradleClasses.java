@@ -1,4 +1,4 @@
-package org.netbeans.gradle.javaee.model.gradleclasses;
+package org.netbeans.gradle.javaee.models.internal;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

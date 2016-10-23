@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.netbeans.api.project.Project;
-import org.netbeans.gradle.javaee.jpa.model.NbJpaModel;
+import org.netbeans.gradle.javaee.models.NbJpaModel;
 import org.netbeans.gradle.javaee.jpa.verification.GradlePersistenceScopesProvider;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
 import org.openide.util.Lookup;

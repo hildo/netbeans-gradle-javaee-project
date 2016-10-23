@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.gradle.javaee.web.ModelReloadListener;
-import org.netbeans.gradle.javaee.web.model.NbWebModel;
+import org.netbeans.gradle.javaee.models.NbWebModel;
 import org.netbeans.gradle.project.api.event.NbListenerRefs;
 import org.openide.util.ChangeSupport;
 
