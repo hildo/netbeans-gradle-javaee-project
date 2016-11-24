@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.version>RELEASE81</netbeans.version>
+        <netbeans.version>RELEASE82</netbeans.version>
     </properties>
 
     <repositories>
@@ -36,6 +36,17 @@
             <id>bintray-kelemen</id>
             <name>BinTray - Kelemen</name>
             <url>http://dl.bintray.com/kelemen/maven</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- 
+        Gradle Libs
+        -->
+        <repository>
+            <id>gradle</id>
+            <name>Gradle</name>
+            <url>http://repo.gradle.org/gradle/libs-releases-local</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -142,7 +153,7 @@
         <dependency>
             <groupId>com.github.kelemen</groupId>
             <artifactId>netbeans-gradle-plugin</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.9.1</version>
         </dependency>
 
         <dependency>
