@@ -1,14 +1,12 @@
 import java.nio.file.*
 
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        jcenter()
     }
-  }
-  dependencies {
-    classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.12.0"
-  }
+    dependencies {
+        classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.15.0"
+    }
 }
 
 apply plugin: 'java'
@@ -33,6 +31,8 @@ def tryGetProperty = { String name, String defaultValue ->
 }
 
 nbm {
+    moduleAuthor = 'Ed Hillmann'
+    licenseFile = 'license.txt'
     moduleName = 'org.netbeans.gradle.javaee.project'
     localizingBundle = 'org/netbeans/gradle/javaee/plugin/Bundle.properties'
 
@@ -42,6 +42,11 @@ nbm {
         keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
         username = tryGetProperty('nbGradlePluginKeyStoreUser', '')
         password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+    }
+
+    friendPackages {
+        add 'org.netbeans.gradle.javaee.jpa'
+        add 'org.netbeans.gradle.javaee.web'
     }
 }
 
