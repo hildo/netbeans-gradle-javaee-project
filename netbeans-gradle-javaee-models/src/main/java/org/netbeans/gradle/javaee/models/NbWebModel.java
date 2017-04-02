@@ -6,11 +6,7 @@
 
 package org.netbeans.gradle.javaee.models;
 
-import org.gradle.api.Project;
-
-import java.io.File;
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 /**
  * Handy doco pages for this:
@@ -21,7 +17,6 @@ import java.util.logging.Logger;
  */
 public final class NbWebModel implements Serializable {
     private static final long serialVersionUID = 2209710889385730864L;
-    private static final Logger LOGGER = Logger.getLogger(NbWebModel.class.getName());
 
     private final String webAppDir;
     private final String deploymentDescName;
