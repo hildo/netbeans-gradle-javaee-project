@@ -1,14 +1,5 @@
 import java.nio.file.*
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.15.0"
-    }
-}
-
 apply plugin: 'java'
 apply plugin: "cz.kubacki.nbm"
 

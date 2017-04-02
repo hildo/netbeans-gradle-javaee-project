@@ -12,11 +12,13 @@ dependencies {
     compile localGroovy()
     compile "org.gradle:gradle-tooling-api:1.11"
     compile "org.codehaus.mojo:nbm-maven-harness:7.4"
+    compile "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.15.0"
     runtime 'org.slf4j:slf4j-simple:1.7.5'
 }
 
 repositories {
     mavenCentral()
+    jcenter()
     maven {
         url 'http://repo.gradle.org/gradle/libs-releases-local'
     }
