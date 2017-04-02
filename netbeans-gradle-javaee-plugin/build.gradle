@@ -1,7 +1,7 @@
 import java.nio.file.*
 
 apply plugin: 'java'
-apply plugin: "cz.kubacki.nbm"
+apply plugin: 'cz.kubacki.nbm'
 
 String netbeansVersion = 'RELEASE81'
 
