@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.netbeans.api.project.Project;
-import org.netbeans.gradle.javaee.web.model.NbWebModel;
-import org.netbeans.gradle.javaee.web.model.NbWebModelBuilder;
+import org.netbeans.gradle.javaee.models.GradleEEModelBuilders;
+import org.netbeans.gradle.javaee.models.NbWebModel;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtensionDef;
 import org.netbeans.gradle.project.api.entry.ModelLoadResult;
@@ -69,7 +69,7 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
         ParsedModel<NbWebModel> returnValue = null;
         NbWebModel webModel = retrievedModels.getMainProjectModels().lookup(NbWebModel.class);
         if (webModel != null) {
-            returnValue = new ParsedModel(webModel);
+            returnValue = new ParsedModel<>(webModel);
         }
         LOGGER.exiting(this.getClass().getName(), "parseModel", returnValue);
         return returnValue;
@@ -91,7 +91,7 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
     private static final class Query2 implements GradleModelDefQuery2 {
 
         private static final SpecificationVersion MINIMUM_JDK_VERSION = new SpecificationVersion("1.7");
-        private static final GradleModelDef RESULT = GradleModelDef.fromProjectInfoBuilders(NbWebModelBuilder.INSTANCE);
+        private static final GradleModelDef RESULT = GradleModelDef.fromProjectInfoBuilders2(GradleEEModelBuilders.WEB_BUILDER);
 
         @Override
         public GradleModelDef getModelDef(GradleTarget gradleTarget) {

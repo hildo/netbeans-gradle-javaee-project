@@ -9,7 +9,7 @@ package org.netbeans.gradle.javaee.web;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.netbeans.api.project.Project;
-import org.netbeans.gradle.javaee.web.model.NbWebModel;
+import org.netbeans.gradle.javaee.models.NbWebModel;
 import org.netbeans.gradle.javaee.web.nodes.WebModuleExtensionNodes;
 import org.netbeans.gradle.javaee.web.sources.GradleWebProjectSources;
 import org.netbeans.gradle.project.api.entry.GradleProjectExtension2;

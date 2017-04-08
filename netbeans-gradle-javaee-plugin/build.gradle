@@ -1,0 +1,111 @@
+import java.nio.file.*
+
+apply plugin: 'java'
+apply plugin: 'cz.kubacki.nbm'
+apply plugin: 'nbm-dependency-verifier'
+
+String netbeansVersion = 'RELEASE81'
+
+repositories {
+    mavenCentral()
+    maven { url 'http://bits.netbeans.org/nexus/content/groups/netbeans' }
+    maven { url 'http://bits.netbeans.org/maven2/' }
+    maven { url 'http://repo.gradle.org/gradle/libs-releases-local' }
+    maven { url 'http://dl.bintray.com/kelemen/maven' }
+}
+
+def tryGetProperty = { String name, String defaultValue ->
+    if (!project.hasProperty(name)) {
+        return defaultValue
+    }
+
+    return project.property(name)?.toString()
+}
+
+nbm {
+    moduleAuthor = 'Ed Hillmann'
+    licenseFile = 'license.txt'
+    moduleName = 'org.netbeans.gradle.javaee.project'
+    localizingBundle = 'org/netbeans/gradle/javaee/plugin/Bundle.properties'
+
+    requires 'cnb.org.netbeans.gradle.project'
+
+    keyStore {
+        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
+        username = tryGetProperty('nbGradlePluginKeyStoreUser', '')
+        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+    }
+
+    friendPackages {
+        add 'org.netbeans.gradle.javaee.jpa'
+        add 'org.netbeans.gradle.javaee.web'
+    }
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+configurations {
+    pluginInstall
+}
+
+def netbeansModule = { String groupName, String moduleName ->
+    return [
+        group: groupName,
+        name: moduleName,
+        version: netbeansVersion
+    ]
+}
+
+dependencies {
+    compile project(':netbeans-gradle-javaee-models')
+
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-projectapi')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-api-annotations-common')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-java-project')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-api-java-classpath')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-api-web-webmodule')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-j2ee-core')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-j2ee-dd')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-j2ee-metadata')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-modules')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-util')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-util-lookup')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-filesystems')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-loaders')
+    providedCompile netbeansModule('org.netbeans.api', 'org-openide-nodes')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-nbjunit')
+    providedCompile netbeansModule('org.netbeans.api', 'org-netbeans-modules-j2eeserver')
+    providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-web-beans')
+    providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-j2ee-persistenceapi')
+    providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
+
+    providedCompile "com.github.kelemen:netbeans-gradle-plugin:${nbGradleVersion}"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+
+    // dev-feature: For installation of plugins required by this plugin
+    // groovy-plugin is not listed here; assumed that full NB version with groovy-support is installed by dev
+    pluginInstall "com.github.kelemen:netbeans-gradle-plugin:${nbGradleVersion}@nbm"
+}
+
+task extractPlugins << {
+  def nbms = project.configurations.pluginInstall.findAll {it.name.endsWith(".nbm") }
+  println nbms
+  nbms.each { nbm ->
+      def sourceFile = file(nbm)
+      def outputDir = file("${buildDir}/tmp/plugins")
+      copy {
+        from zipTree(sourceFile)
+        into outputDir
+      }
+  }
+}
+
+task installPlugins(type: Copy, dependsOn: extractPlugins) {
+    from "${buildDir}/tmp/plugins/netbeans"
+    into "${buildDir}/module"
+}
+
+run.dependsOn installPlugins
