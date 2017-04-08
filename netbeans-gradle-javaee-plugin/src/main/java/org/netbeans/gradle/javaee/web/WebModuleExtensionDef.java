@@ -67,6 +67,7 @@ public class WebModuleExtensionDef implements GradleProjectExtensionDef<NbWebMod
     public ParsedModel<NbWebModel> parseModel(ModelLoadResult retrievedModels) {
         LOGGER.entering(this.getClass().getName(), "parseModel", retrievedModels);
         ParsedModel<NbWebModel> returnValue = null;
+        // XXX: My log files suggest that the lookup method is returning null
         NbWebModel webModel = retrievedModels.getMainProjectModels().lookup(NbWebModel.class);
         if (webModel != null) {
             returnValue = new ParsedModel<>(webModel);
