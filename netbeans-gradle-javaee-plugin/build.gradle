@@ -4,14 +4,16 @@ apply plugin: 'java'
 apply plugin: 'cz.kubacki.nbm'
 apply plugin: 'nbm-dependency-verifier'
 
-String netbeansVersion = 'RELEASE81'
+String netbeansVersion = 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url 'http://bits.netbeans.org/nexus/content/groups/netbeans' }
-    maven { url 'http://bits.netbeans.org/maven2/' }
+    String nbRepo = netbeansVersion.endsWith('-SNAPSHOT')
+            ? 'http://bits.netbeans.org/netbeans/trunk/new-maven-snapshot'
+            : 'http://bits.netbeans.org/nexus/content/groups/netbeans'
+    maven { url nbRepo }
+    jcenter()
     maven { url 'http://repo.gradle.org/gradle/libs-releases-local' }
-    maven { url 'http://dl.bintray.com/kelemen/maven' }
 }
 
 def tryGetProperty = { String name, String defaultValue ->
@@ -42,8 +44,8 @@ nbm {
     }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configurations {
     pluginInstall

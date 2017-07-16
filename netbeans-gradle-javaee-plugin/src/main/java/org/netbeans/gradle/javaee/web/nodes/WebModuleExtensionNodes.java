@@ -7,7 +7,6 @@
 package org.netbeans.gradle.javaee.web.nodes;
 
 import org.netbeans.gradle.javaee.web.WebModuleExtension;
-import org.netbeans.gradle.project.api.event.NbListenerRef;
 import org.netbeans.gradle.project.api.nodes.GradleProjectExtensionNodes;
 import org.netbeans.gradle.project.api.nodes.ManualRefreshedNodes;
 import org.netbeans.gradle.project.api.nodes.SingleNodeFactory;
@@ -23,9 +22,10 @@ import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.jtrim2.concurrent.Tasks;
+import org.jtrim2.event.ListenerRef;
 import org.netbeans.gradle.javaee.web.ModelReloadListener;
 import org.netbeans.gradle.javaee.models.NbWebModel;
-import org.netbeans.gradle.project.api.event.NbListenerRefs;
 import org.openide.util.ChangeSupport;
 
 /**
@@ -65,21 +65,13 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes, Mod
     }
 
     @Override
-    public NbListenerRef addNodeChangeListener(final Runnable listener) {
-        final ChangeListener changeListener = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                listener.run();
-            }
-        };
+    public ListenerRef addNodeChangeListener(final Runnable listener) {
+        ChangeListener changeListener = (ChangeEvent e) -> listener.run();
 
         nodeChanges.addChangeListener(changeListener);
-        return NbListenerRefs.fromRunnable(new Runnable() {
-            @Override
-            public void run() {
-                nodeChanges.removeChangeListener(changeListener);
-            }
-        });
+        return Tasks.runOnceTask(() -> {
+            nodeChanges.removeChangeListener(changeListener);
+        })::run;
     }
 
     @Override
@@ -93,19 +85,44 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes, Mod
         FileObject webDir = webModule.getWebDir();
         LOGGER.log(Level.FINEST, "webDir = {0}", webDir);
         if (webDir != null) {
-            final DataFolder listedFolder = DataFolder.findFolder(webDir);
-            LOGGER.log(Level.FINEST, "listedFolder = {0}", listedFolder);
-            list.add(new SingleNodeFactory() {
+            list.add(new WebDirNodeFactory(webDir));
+        }
+    }
+
+    private static class WebDirNodeFactory implements SingleNodeFactory {
+        private final FileObject webDir;
+        private final DataFolder listedFolder;
+
+        public WebDirNodeFactory(FileObject webDir) {
+            this.webDir = webDir;
+            this.listedFolder = DataFolder.findFolder(webDir);
+        }
+
+        @Override
+        public Node createNode() {
+            return new FilterNode(listedFolder.getNodeDelegate().cloneNode()) {
                 @Override
-                public Node createNode() {
-                    return new FilterNode(listedFolder.getNodeDelegate().cloneNode()) {
-                        @Override
-                        public String getDisplayName() {
-                            return "Web Pages";
-                        }
-                    };
+                public String getDisplayName() {
+                    return "Web Pages";
                 }
-            });
+            };
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 37 * hash + Objects.hashCode(webDir);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+
+            final WebDirNodeFactory other = (WebDirNodeFactory) obj;
+            return Objects.equals(this.webDir, other.webDir);
         }
     }
 }
