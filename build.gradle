@@ -3,6 +3,6 @@ allprojects {
     version = '1.0.3'
 
     ext {
-        nbGradleVersion = '1.4.0'
+        nbGradleVersion = '2.0.0.1'
     }
 }

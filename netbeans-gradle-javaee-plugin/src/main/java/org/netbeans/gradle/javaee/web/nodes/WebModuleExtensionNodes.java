@@ -7,7 +7,6 @@
 package org.netbeans.gradle.javaee.web.nodes;
 
 import org.netbeans.gradle.javaee.web.WebModuleExtension;
-import org.netbeans.gradle.project.api.event.NbListenerRef;
 import org.netbeans.gradle.project.api.nodes.GradleProjectExtensionNodes;
 import org.netbeans.gradle.project.api.nodes.ManualRefreshedNodes;
 import org.netbeans.gradle.project.api.nodes.SingleNodeFactory;
@@ -23,9 +22,10 @@ import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.jtrim2.concurrent.Tasks;
+import org.jtrim2.event.ListenerRef;
 import org.netbeans.gradle.javaee.web.ModelReloadListener;
 import org.netbeans.gradle.javaee.models.NbWebModel;
-import org.netbeans.gradle.project.api.event.NbListenerRefs;
 import org.openide.util.ChangeSupport;
 
 /**
@@ -65,7 +65,7 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes, Mod
     }
 
     @Override
-    public NbListenerRef addNodeChangeListener(final Runnable listener) {
+    public ListenerRef addNodeChangeListener(final Runnable listener) {
         final ChangeListener changeListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -74,12 +74,9 @@ public class WebModuleExtensionNodes implements GradleProjectExtensionNodes, Mod
         };
 
         nodeChanges.addChangeListener(changeListener);
-        return NbListenerRefs.fromRunnable(new Runnable() {
-            @Override
-            public void run() {
-                nodeChanges.removeChangeListener(changeListener);
-            }
-        });
+        return Tasks.runOnceTask(() -> {
+            nodeChanges.removeChangeListener(changeListener);
+        })::run;
     }
 
     @Override
