@@ -43,7 +43,8 @@ import org.gradle.jvm.tasks.Jar;
 
 public final class NbmDependencyVerifierPlugin implements Plugin<Project> {
     private static final List<VersionlessArtifactId> UNCHECKED = Arrays.asList(
-            new VersionlessArtifactId("com.github.kelemen", "netbeans-gradle-default-models"));
+            new VersionlessArtifactId("com.github.kelemen", "netbeans-gradle-default-models"),
+            new VersionlessArtifactId("org.jtrim2", null));
 
     @Override
     public void apply(final Project project) {
@@ -145,9 +146,19 @@ public final class NbmDependencyVerifierPlugin implements Plugin<Project> {
         }
     }
 
+    private static boolean matches(String searched, String pattern) {
+        if (pattern == null) {
+            return true;
+        }
+        return Objects.equals(searched, pattern);
+    }
+
     private static boolean contains(ModuleComponentIdentifier dependency, Collection<VersionlessArtifactId> collection) {
         VersionlessArtifactId searched = new VersionlessArtifactId(dependency.getGroup(), dependency.getModule());
-        return collection.contains(searched);
+        return collection.stream().filter(unchecked -> {
+            return matches(searched.group, unchecked.group)
+                    && matches(searched.name, unchecked.name);
+        }).findAny().isPresent();
     }
 
     private static Configuration getUncheckedDependencies(Project project, Configuration providedCompile) {
@@ -255,25 +266,6 @@ public final class NbmDependencyVerifierPlugin implements Plugin<Project> {
         public VersionlessArtifactId(String group, String name) {
             this.group = group;
             this.name = name;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 89 * hash + Objects.hashCode(group);
-            hash = 89 * hash + Objects.hashCode(name);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-
-            final VersionlessArtifactId other = (VersionlessArtifactId) obj;
-            return Objects.equals(this.group, other.group)
-                    && Objects.equals(this.name, other.name);
         }
     }
 }
